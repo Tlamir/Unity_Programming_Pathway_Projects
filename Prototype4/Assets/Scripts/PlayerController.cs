@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,18 +15,20 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-        focalPoint = GameObject.Find("Focal Point");
-        
+        focalPoint = GameObject.Find("Focal Point");    
     }
 
     // Update is called once per frame
     void Update()
     {
         float forwardInput = Input.GetAxis("Vertical");
-
         playerRb.AddForce(focalPoint.transform.forward*speed*forwardInput);
-
         powerupIndicator.transform.position = transform.position+ new Vector3(0,-0.5f,0);
+        //Restart The Game if the player falls from the platform
+        if (transform.position.y < -40)
+        {
+            SceneManager.LoadScene("Prototype 4");
+        }
     }
     private void OnTriggerEnter(Collider other)
     {
