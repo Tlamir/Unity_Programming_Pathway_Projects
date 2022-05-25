@@ -4,43 +4,46 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float horizonralInput;
-    public float verticalInput;
-    public float speed = 10.0f;
-    public float xRange = 10.0f;
-    public float zRange = 10.0f;
-
-    
-
+    private float horizontalInput;
+    private float speed = 20.0f;
+    private float xRange = 20;
     public GameObject projectilePrefab;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+
 
     // Update is called once per frame
     void Update()
     {
-        //Keep Player in bounds
-        if (transform.position.x<-xRange)//Right Boundary
+        // Check for left and right bounds
+        if (transform.position.x < -xRange)
         {
             transform.position = new Vector3(-xRange, transform.position.y, transform.position.z);
         }
-        if (transform.position.x >xRange)//Left Boundary
+
+        if (transform.position.x > xRange)
         {
             transform.position = new Vector3(xRange, transform.position.y, transform.position.z);
         }
-        horizonralInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
 
-        transform.Translate(Vector3.right * horizonralInput * Time.deltaTime * speed);
-        transform.Translate(Vector3.forward * verticalInput * Time.deltaTime*speed);
+        // Player movement left to right
+        horizontalInput = Input.GetAxis("Horizontal");
+        transform.Translate(Vector3.right * Time.deltaTime * speed * horizontalInput);
+
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            //Lanuch a projectile from the player
-            Instantiate(projectilePrefab,transform.position,projectilePrefab.transform.rotation);
+            // No longer necessary to Instantiate prefabs
+            // Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+
+            // Get an object object from the pool
+            GameObject pooledProjectile = ObjectPooler.SharedInstance.GetPooledObject();
+            if (pooledProjectile != null)
+            {
+                pooledProjectile.SetActive(true); // activate it
+                pooledProjectile.transform.position = transform.position; // position it at player
+            }
         }
+
+
+
     }
 }
